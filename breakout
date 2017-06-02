@@ -1,0 +1,138 @@
+//Variables para posicion y direccion de la bolita
+var x = 500;
+var y = 720;
+var dx = 4;
+var dy = -4;
+
+var anchoBarra = 0;
+var altoBarra = 0;
+var centroBarra = 0;
+
+let filas = 10;
+let columnas = 4;
+
+let cuboAncho;
+let cuboAlto;
+let cuboX;
+let cuboY;
+
+let cubos = [];
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  background(200);
+  frameRate(60);
+  imageMode(CENTER);
+  smooth();
+  
+  noCursor();
+  
+  fondo = loadImage("https://www.openprocessing.org/sketch/432052/files/fondo-01.png");
+  fondo2 =loadImage("https://www.openprocessing.org/sketch/432052/files/fondo-02.png"); 
+  barra = loadImage("https://www.openprocessing.org/sketch/431833/files/barrita.png");
+  cubo = loadImage("https://www.openprocessing.org/sketch/432052/files/cubo.png");
+  gameover = loadImage("https://www.openprocessing.org/sketch/432052/files/gameover.png");
+  playagain = loadImage("https://www.openprocessing.org/sketch/432052/files/playagain.png"); 
+}
+
+function draw() {
+  image(fondo, width/2, height/2, windowWidth, windowHeight);
+  
+  dibujaBarra();
+  dibujaCubos();
+  posicionPunto();
+  dibujaPunto();
+  rebotaPunto();
+  gameOver();
+  
+  textSize(80);
+  textAlign(CENTER);
+//  text(x, width/2, height/2);
+}
+
+function dibujaBarra(){
+  var anchoBarra = barra.width/4;
+  var altoBarra = barra.height/4;
+  image(barra, constrain(mouseX, anchoBarra/2, width-anchoBarra/2), height/8*7, anchoBarra, altoBarra);
+}
+
+function dibujaCubos(){
+for (var f = 0; f < filas; f++) {
+    for (var c = 0; c < columnas; c++) {
+      if (cubos[f][c]) {
+        cuboX = width/11 + width/11*f;
+        cuboY = height/20*2 + (height/20*2)*c;
+      	cuboAncho = cubo.width/4;
+      	cuboAlto = cubo.height/4;
+        image(cubo, cuboX, cuboY, cuboAncho, cuboAlto);
+      }
+    }
+  }
+}
+
+function posicionPunto(){
+ x = x + dx;
+ y = y + dy;
+}
+
+function dibujaPunto(){
+  stroke(255);
+  strokeWeight(20);
+  point(x,y);
+  strokeWeight(6);
+}
+
+function rebotaPunto(){
+ 
+  // Rebota si choca con los bordes
+    if (x >= width || x <= 0) {
+      dx *= -1;
+    }
+     if (y <= 0) {
+      dy *= -1;
+    }
+  
+  // Rebota si choca con la barra viniendo desde arriba y cambia direccion de acuerdo de donde viene
+  
+  centroBarra = barra.width/2;
+  
+    if (y >= height/8*7-15 && y < height/8*7 + 10) {
+      
+      
+      if (x > (mouseX - centroBarra) && x < (mouseX - centroBarra/3) && dx > 0 && dy > 0) {
+        dy *= -0.95;
+        dx *= -1.05;
+      }
+      else if (x > (mouseX - centroBarra) && x < (mouseX - centroBarra/3) && dx < 0 && dy > 0) {
+        dy *= -0.95;
+        dx *= 1.05;
+      }
+      else if ( x > (mouseX + centroBarra/3) && x < (mouseX + centroBarra) && dx > 0 && dy > 0) {
+        dy *= -0.95;
+        dx *= 1.05;
+      }
+      else if (x > (mouseX + centroBarra/3) && x < (mouseX + centroBarra) && dx < 0 && dy > 0) {
+        dy *= -0.95;
+        dx *= -1.05;
+      }
+      else if (x > (mouseX - centroBarra/3) && x < (mouseX + centroBarra/3) && dy > 0) {
+        dy *= -1.05;
+        dx *= 0.95;
+      }
+    }
+}
+
+function gameOver(){
+ if(y > height){
+   var botonpaW = playagain.width;
+   var botonpaH = playagain.height;
+   image(fondo2, width/2, height/2);
+   image(gameover, width/2, height/2-100);
+   image(playagain, width/2, height/6*5, botonpaW, botonpaH);
+   dx=0;
+   dy=0;
+   cursor();
+ }   
+//   if(mouseIsPressed == true){
+// }
+}
